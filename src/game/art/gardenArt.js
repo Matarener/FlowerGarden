@@ -162,8 +162,9 @@ function drawWell(g) {
   box(g, -36, -58, 7, 64, 2, 0x8a5a33, 2); box(g, 29, -58, 7, 64, 2, 0x8a5a33, 2);
   poly(g, [[-46, -52], [0, -80], [46, -52], [40, -46], [-40, -46]], 0xd2392a);
   g.fillStyle(0xa82a1e, 1); g.fillPoints([{ x: 0, y: -77 }, { x: 40, y: -50 }, { x: 0, y: -50 }]);
-  g.lineStyle(2.2, INK, 1); g.line(-30, -36, 30, -36);
-  box(g, -4, -44, 8, 10, 2, 0x6fa8d0, 1.8);
+  // вал ворота (верёвка и ведро — отдельные текстуры, они двигаются)
+  box(g, -30, -39, 64, 6, 3, 0xa86e3e, 1.8);
+  disc(g, 38, -36, 4, 0x8a5a33, 1.8);
   // каменный сруб
   box(g, -38, -6, 76, 34, 10, 0x9aa4a8);
   g.fillStyle(0x3a5a78, 1); g.fillEllipse(0, -6, 66, 14);
@@ -171,6 +172,24 @@ function drawWell(g) {
   shine(g, -10, -5, 14, 3, 0.5);
   const r = rng(8);
   for (let i = 0; i < 9; i++) { g.lineStyle(1.6, 0x6e787c, 1); const x = -30 + (i % 5) * 15 + (i > 4 ? 7 : 0), y = i > 4 ? 18 : 8; g.strokeRoundedRect(x - 6, y - 4, 13 + r() * 2, 8, 3); }
+}
+
+/** Ведро: точка (0, 0) — верх дужки, за неё ведро висит на верёвке. */
+function drawBucket(g, full) {
+  g.lineStyle(2, INK, 1); g.strokeArc(0, 9, 8, Math.PI * 1.05, Math.PI * 1.95);
+  poly(g, [[-9, 6], [9, 6], [7, 20], [-7, 20]], 0x8a5a33, 2);
+  g.fillStyle(0x6e4626, 1); g.fillRect(-8, 11, 16, 2.5);
+  g.fillStyle(INK, 1); g.fillEllipse(0, 6, 19, 6);
+  g.fillStyle(full ? 0x5cb0ff : 0x4a3424, 1); g.fillEllipse(0, 6, 15.5, 4);
+  if (full) shine(g, -3, 5.5, 5, 1.5, 0.7);
+}
+
+/** Ручка ворота: крутится вокруг оси. */
+function drawCrank(g) {
+  g.lineStyle(5, INK, 1); g.line(0, 0, 0, 12);
+  g.lineStyle(2.6, 0xc8945c, 1); g.line(0, 0, 0, 12);
+  disc(g, 0, 13, 3.4, 0xd2392a, 1.6);
+  disc(g, 0, 0, 2.6, 0x8a5a33, 1.4);
 }
 
 function drawTable(g) {
@@ -254,6 +273,10 @@ export function makeGardenTextures(textures, label) {
   textures.bake('bed_locked', BED_W + 4, BED_H + 4, BED_W / 2 + 2, BED_H / 2 + 2, drawLockedBed);
   textures.bake('well', 104, 124, 52, 86, drawWell);
   textures.bake('table', 96, 90, 48, 56, drawTable);
+  textures.bake('bucket', 26, 26, 13, 2, (g) => drawBucket(g, false));
+  textures.bake('bucket_full', 26, 26, 13, 2, (g) => drawBucket(g, true));
+  textures.bake('rope', 4, 10, 2, 0, (g) => { g.fillStyle(0x7a5a3a, 1); g.fillRect(-1.2, 0, 2.4, 10); });
+  textures.bake('crank', 14, 24, 7, 5, drawCrank);
   textures.bake('counter', 390, 80, 0, 4, drawCounter);
   textures.bake('bubble', 112, 74, 56, 30, drawBubble);
   textures.bake('pbar_bg', 64, 10, 0, 5, (g) => barBg(g, 64, 10));

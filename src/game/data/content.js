@@ -29,7 +29,7 @@ export const RULES = {
 };
 
 /** Сколько длится каждое дело Тиши (без дороги). */
-export const WORK_MS = { plant: 450, water: 800, pick: 380, clear: 600, well: 900, tie: 900, serve: 450 };
+export const WORK_MS = { plant: 450, water: 800, pick: 380, clear: 600, well: 1400, tie: 900, serve: 450 };
 
 /** Покупатели: скины скелета и их имена (для подсказок). */
 export const CUSTOMERS = [

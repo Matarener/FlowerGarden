@@ -333,6 +333,7 @@ export class LevelModel extends Emitter {
       case 'well': {
         if (this.water >= this.up.can) return fail('Лейка полна');
         this.water = this.up.can;
+        h.facing = -1; // колодец слева от Тиши
         work();
         this.emit('water');
         return;

@@ -22,7 +22,7 @@ export const HERO_START = { x: 195, y: 735 };
 /** Куда встаёт Тиша, чтобы сделать дело с предметом. */
 export function anchorOf(action) {
   switch (action.type) {
-    case 'well': return { x: WELL.x + 52, y: WELL.y + 8 };
+    case 'well': return { x: WELL.x + 64, y: WELL.y + 8 };
     case 'tie': return { x: TABLE.x - 56, y: TABLE.y + 4 };
     case 'serve': return { x: SPOTS[action.spot].x, y: 330 };
     default: {

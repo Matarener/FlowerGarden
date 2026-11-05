@@ -9,7 +9,7 @@ import { FLOWER_COLORS } from '../art/flowers.js';
 import { PlantView } from './level/PlantView.js';
 import { CustomerView } from './level/CustomerView.js';
 
-const HERO_ANIM = { plant: 'bend', pick: 'bend', clear: 'bend', water: 'water', well: 'pump', tie: 'tie', serve: 'give' };
+const HERO_ANIM = { plant: 'bend', pick: 'bend', clear: 'bend', water: 'water', well: 'fill', tie: 'tie', serve: 'give' };
 const SOIL = 0x6b4a30;
 const WATER = 0x5cb0ff;
 
@@ -33,6 +33,12 @@ export class LevelScene extends Scene {
       this.sprite(locked ? 'bed_locked' : 'bed', b.x, b.y).setDepth(b.y - 50).setStatic();
     });
     this.sprite('well', WELL.x, WELL.y).setStatic();
+    // верёвка, ведро и ручка ворота двигаются, поэтому не в статичном слое
+    this.rope = this.sprite('rope', WELL.x, WELL.y - 36).setDepth(WELL.y + 1);
+    this.bucket = this.sprite('bucket', WELL.x, WELL.y - 30).setDepth(WELL.y + 2);
+    this.crank = this.sprite('crank', WELL.x + 38, WELL.y - 36).setDepth(WELL.y + 3);
+    this._setRope(6);
+    this.drops = Array.from({ length: 6 }, () => this.sprite('drop', 0, 0).setDepth(2000).setVisible(false).setScale(0.6));
     if (this.def.bouquets) this.sprite('table', TABLE.x, TABLE.y).setStatic();
     this.sprite('counter', 0, 240).setDepth(300);
 
@@ -43,7 +49,10 @@ export class LevelScene extends Scene {
     this.hero = this.add(new SkeletonSprite(this.textures, CRITTER, 'tisha', 0, 0));
     this.hero.play('idle');
     // струйка воды из носика лейки
-    this.hero.on('event', (name) => { if (name === 'pour') this._pour(); });
+    this.hero.on('event', (name) => {
+      if (name === 'pour') this._pour();
+      else if (name === 'fill') this._fillDrop();
+    });
 
     this.pestViews = Array.from({ length: 5 }, () => ({ s: this.sprite('beetle_a', -100, -100).setDepth(900).setVisible(false), id: null }));
     this.badges = Array.from({ length: 6 }, (_, k) => this.sprite('q' + (k + 1), 0, 0).setDepth(950).setVisible(false));
@@ -160,7 +169,7 @@ export class LevelScene extends Scene {
         case 'water': app.sfx('water'); this.burst(t.x, t.y, WATER, 14, [240, 300]); break;
         case 'pick': app.sfx('pick'); this.burst(t.x, t.y - 30, FLOWER_COLORS[m.basket[m.basket.length - 1]] ?? 0xffffff, 14); break;
         case 'clear': app.sfx('plant', { rate: 0.8 }); this.burst(t.x, t.y + 6, SOIL, 12); break;
-        case 'well': app.sfx('pump'); this.burst(WELL.x, WELL.y - 8, WATER, 16); break;
+        case 'well': app.sfx('pump'); this._wellAnim(); break;
         case 'tie': app.sfx('tie'); break;
         case 'serve': app.sfx('serve'); break;
       }
@@ -202,6 +211,57 @@ export class LevelScene extends Scene {
   burst(x, y, color, count, angle) {
     if (this.app.reduceMotion) return;
     this.fx.burst(x, y, { color, count, ...(angle ? { angle } : {}) });
+  }
+
+  /** Длина верёвки от вала до дужки ведра. */
+  _setRope(len) {
+    this.ropeLen = len;
+    this.rope.scaleY = len / 10;
+    this.bucket.y = WELL.y - 36 + len;
+  }
+
+  /** Ворот крутится, ведро опускается в воду, поднимается полным и наклоняется над лейкой. */
+  _wellAnim() {
+    const T = this.tweens, b = this.bucket, rope = { len: this.ropeLen };
+    const setLen = () => this._setRope(rope.len);
+    T.killTweensOf(b); T.killTweensOf(this.crank);
+    b.rotation = 0;
+    b.setTexture('bucket');
+    T.add({ targets: this.crank, rotation: this.crank.rotation + Math.PI * 6, duration: 700, ease: 'sineInOut' });
+    T.add({
+      targets: rope, len: 22, duration: 330, ease: 'quadIn', onUpdate: setLen,
+      onComplete: () => {
+        this.app.sfx('water', { volume: 0.5, rate: 0.8 });
+        this.burst(WELL.x, WELL.y - 6, WATER, 10);
+        b.setTexture('bucket_full');
+        T.add({
+          targets: rope, len: 6, duration: 370, ease: 'quadOut', onUpdate: setLen,
+          onComplete: () => T.add({
+            targets: b, rotation: 0.75, duration: 160, ease: 'quadOut',
+            onComplete: () => this.timers.delay(380, () => {
+              b.setTexture('bucket');
+              T.add({ targets: b, rotation: 0, duration: 220, ease: 'backOut' });
+            }),
+          }),
+        });
+      },
+    });
+  }
+
+  /** Капля летит из наклонённого ведра в лейку. Горлышко лейки — точка (LX, LY) в её рисунке. */
+  _fillDrop() {
+    const d = this.drops.find((s) => !s.visible);
+    if (!d || this.app.reduceMotion) return;
+    const h = this.hero, sk = h.skeleton, m = sk.world[sk.boneIndex.prop];
+    const LX = 11, LY = 12;
+    const tx = h.x + h.scaleX * (m.a * LX + m.c * LY + m.tx), ty = h.y + h.scaleY * (m.b * LX + m.d * LY + m.ty);
+    const b = this.bucket;
+    d.setPosition(b.x + 8, b.y + 8).setAlpha(1).setVisible(true);
+    this.tweens.add({ targets: d, x: tx, duration: 220, ease: 'linear' });
+    this.tweens.add({
+      targets: d, y: ty, duration: 220, ease: 'quadIn',
+      onComplete: () => { d.visible = false; this.fx.burst(tx, ty, { color: WATER, count: 2, speed: [20, 40], life: [200, 300], scale: [0.5, 0.1] }); },
+    });
   }
 
   /** Капли из носика: точка носика в рисунке лейки пересчитывается через кость prop. */
