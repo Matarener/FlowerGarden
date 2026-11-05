@@ -133,8 +133,9 @@ function eyes(g, kind) {
   }
 }
 
-/** Лейка в лапке Тиши. */
+/** Лейка в лапке Тиши. Точка (0, 0) — верх ручки: за неё Тиша держит лейку. */
 function drawCan(g) {
+  g.ctx.translate(-4, 16);
   poly(g, [[8, -4], [26, -14], [29, -10], [12, 4]], 0x9fb8c8, 2);
   oval(g, 30, -13, 7, 9, 0xc8dde8, 1.8);
   box(g, -6, -8, 20, 18, 5, 0x6fa8d0);
@@ -151,7 +152,7 @@ export function makeCritterTextures(textures) {
     part(textures, skin + '_head', 84, 80, att('head'), (g) => HEADS[skin](g, c));
   }
   for (const k of ['open', 'closed', 'happy', 'sad']) part(textures, 'eyes_' + k, 34, 16, att('eyes_' + k), (g) => eyes(g, k));
-  part(textures, 'can', 48, 34, att('can'), drawCan);
+  part(textures, 'can', 52, 36, att('can'), drawCan);
   textures.bake('none', 2, 2, 1, 1, () => {});
   // тень под ногами отдельной текстурой: тень не качается вместе с телом
   textures.bake('critter_shadow', 60, 16, 30, 8, (g) => shadow(g, 0, 0, 50, 12, 0.2));

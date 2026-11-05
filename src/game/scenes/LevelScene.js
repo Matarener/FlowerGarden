@@ -42,6 +42,8 @@ export class LevelScene extends Scene {
     this.heroShadow = this.sprite('critter_shadow', 0, 0).setDepth(1);
     this.hero = this.add(new SkeletonSprite(this.textures, CRITTER, 'tisha', 0, 0));
     this.hero.play('idle');
+    // струйка воды из носика лейки
+    this.hero.on('event', (name) => { if (name === 'pour') this._pour(); });
 
     this.pestViews = Array.from({ length: 5 }, () => ({ s: this.sprite('beetle_a', -100, -100).setDepth(900).setVisible(false), id: null }));
     this.badges = Array.from({ length: 6 }, (_, k) => this.sprite('q' + (k + 1), 0, 0).setDepth(950).setVisible(false));
@@ -200,6 +202,17 @@ export class LevelScene extends Scene {
   burst(x, y, color, count, angle) {
     if (this.app.reduceMotion) return;
     this.fx.burst(x, y, { color, count, ...(angle ? { angle } : {}) });
+  }
+
+  /** Капли из носика: точка носика в рисунке лейки пересчитывается через кость prop. */
+  _pour() {
+    const h = this.hero, sk = h.skeleton;
+    const m = sk.world[sk.boneIndex.prop];
+    const k = 1; // масштаб картинки лейки
+    const lx = 26 * k, ly = 3 * k;
+    const x = h.x + h.scaleX * (m.a * lx + m.c * ly + m.tx);
+    const y = h.y + h.scaleY * (m.b * lx + m.d * ly + m.ty);
+    if (!this.app.reduceMotion) this.fx.burst(x, y, { color: WATER, count: 6, speed: [20, 60], angle: h.scaleX > 0 ? [40, 100] : [80, 140], life: [300, 500], gravity: 500, scale: [0.75, 0.25] });
   }
 
   float(text, x, y, color = '#fff4dc', size = 15) {

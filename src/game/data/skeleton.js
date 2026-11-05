@@ -41,7 +41,7 @@ export const CRITTER = {
     eyes_closed: { origin: [0.5, 0.5] },
     eyes_happy: { origin: [0.5, 0.5] },
     eyes_sad: { origin: [0.5, 0.5] },
-    can: { origin: [0.3, 0.55] },
+    can: { origin: [0.31, 0.17] },
     none: { origin: [0.5, 0.5] },
   },
   skins: {
@@ -81,14 +81,21 @@ export const CRITTER = {
       },
       slots: { face: [[0, 'eyes_open'], [0.12, 'eyes_closed'], [0.36, 'eyes_open']] },
     },
+    /**
+     * Полив. Лейка висит на кости prop, которая крутится вместе с лапкой, поэтому
+     * её поворот гасит поворот лапки и туловища: лейка держится ровно, а при поливе
+     * наклоняется носиком вниз. Формула ключа: 18 − (поворот лапки) − (наклон тела) + наклон лейки.
+     */
     water: {
-      duration: 0.55,
+      duration: 0.8,
       bones: {
-        armR: { rotation: [[0, 0], [0.12, -75, 'out'], [0.4, -85], [0.55, 0, 'inOut']] },
-        prop: { rotation: [[0, 0], [0.12, 20, 'out'], [0.3, 45, 'inOut'], [0.42, 30], [0.55, 0]] },
-        body: { rotation: [[0, 0], [0.12, 8, 'out'], [0.55, 0, 'inOut']] },
+        armR: { rotation: [[0, 0], [0.16, -62, 'out'], [0.3, -66, 'inOut'], [0.58, -66], [0.68, -62, 'inOut'], [0.8, 0, 'inOut']] },
+        body: { rotation: [[0, 0], [0.16, 5, 'out'], [0.3, 8, 'inOut'], [0.58, 8], [0.68, 5, 'inOut'], [0.8, 0, 'inOut']] },
+        prop: { rotation: [[0, 18], [0.16, 75, 'out'], [0.3, 128, 'inOut'], [0.44, 122, 'inOut'], [0.58, 130, 'inOut'], [0.68, 75, 'inOut'], [0.8, 18, 'inOut']] },
+        head: { rotation: [[0, 0], [0.2, 6, 'out'], [0.6, 6], [0.8, 0, 'inOut']] },
       },
-      slots: { prop: [[0, 'can'], [0.54, 'none']] },
+      slots: { prop: [[0, 'can'], [0.79, 'none']], face: [[0, 'eyes_open'], [0.3, 'eyes_happy'], [0.62, 'eyes_open']] },
+      events: [[0.3, 'pour'], [0.4, 'pour'], [0.5, 'pour'], [0.58, 'pour']],
     },
     /** Набрать воды у колодца: качает ворот. */
     pump: {
