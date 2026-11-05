@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- Telegram Mini App: нужен для облачного сохранения (вне Telegram ничего не делает) -->
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Цветочная поляна</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700;900&family=Golos+Text:wght@400;500;600;700&family=Caveat:wght@700&display=swap">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-coin" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="12" fill="#ffc93a" stroke="#3e2512" stroke-width="2.6"/>
+      <circle cx="16" cy="16" r="7" fill="#e8a020"/>
+      <path d="M11 11.5a6 4 0 0 1 6-2" stroke="#fff1b0" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </symbol>
+    <symbol id="i-star" viewBox="0 0 32 32">
+      <path d="M16 3.5l3.6 7.6 8.2 1.1-6 5.7 1.5 8.2L16 22.2l-7.3 3.9 1.5-8.2-6-5.7 8.2-1.1z" fill="#ffd45c" stroke="#3e2512" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M12 12.5l2.4-.4" stroke="#fff6cf" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-star-empty" viewBox="0 0 32 32">
+      <path d="M16 3.5l3.6 7.6 8.2 1.1-6 5.7 1.5 8.2L16 22.2l-7.3 3.9 1.5-8.2-6-5.7 8.2-1.1z" fill="#e6d6b4" stroke="#3e2512" stroke-width="2.4" stroke-linejoin="round" opacity=".7"/>
+    </symbol>
+    <symbol id="i-clock" viewBox="0 0 32 32">
+      <circle cx="16" cy="16" r="11" fill="#fff8ec" stroke="#3e2512" stroke-width="2.6"/>
+      <path d="M16 10v6l4 3" fill="none" stroke="#3e2512" stroke-width="2.6" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-drop" viewBox="0 0 32 32">
+      <path d="M16 4c5 7 8 11 8 15a8 8 0 0 1-16 0c0-4 3-8 8-15z" fill="#5cb0ff" stroke="#3e2512" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M12 19a4 4 0 0 0 3 4" stroke="#d8f0ff" stroke-width="2" stroke-linecap="round" fill="none"/>
+    </symbol>
+    <symbol id="i-drop-empty" viewBox="0 0 32 32">
+      <path d="M16 4c5 7 8 11 8 15a8 8 0 0 1-16 0c0-4 3-8 8-15z" fill="#e6d6b4" stroke="#3e2512" stroke-width="2.4" stroke-linejoin="round" opacity=".55"/>
+    </symbol>
+    <symbol id="i-basket" viewBox="0 0 32 32">
+      <path d="M9 13a7 7 0 0 1 14 0" fill="none" stroke="#3e2512" stroke-width="2.6" stroke-linecap="round"/>
+      <path d="M4 13h24l-3 13a2 2 0 0 1-2 1.5H9A2 2 0 0 1 7 26z" fill="#d09a52" stroke="#3e2512" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M8 18h16M9 22.5h14" stroke="#8a5a33" stroke-width="1.8"/>
+    </symbol>
+    <symbol id="i-gear" viewBox="0 0 32 32">
+      <path d="M13.6 3.5h4.8l.8 3.6 2.4 1 3.1-2 3.4 3.4-2 3.1 1 2.4 3.6.8v4.8l-3.6.8-1 2.4 2 3.1-3.4 3.4-3.1-2-2.4 1-.8 3.6h-4.8l-.8-3.6-2.4-1-3.1 2-3.4-3.4 2-3.1-1-2.4-3.6-.8v-4.8l3.6-.8 1-2.4-2-3.1 3.4-3.4 3.1 2 2.4-1z" fill="#d6dde3" stroke="#3e2512" stroke-width="2.2" stroke-linejoin="round"/>
+      <circle cx="16" cy="16" r="4.6" fill="#fff4dc" stroke="#3e2512" stroke-width="2.2"/>
+    </symbol>
+    <symbol id="i-pause" viewBox="0 0 32 32">
+      <rect x="9" y="8" width="5" height="16" rx="2" fill="#3e2512"/><rect x="18" y="8" width="5" height="16" rx="2" fill="#3e2512"/>
+    </symbol>
+    <symbol id="i-shop" viewBox="0 0 32 32">
+      <path d="M5 13h22v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2z" fill="#fff4dc" stroke="#3e2512" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M3 13l3-8h20l3 8z" fill="#e05a48" stroke="#3e2512" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M11 5l-1 8M16 5v8M21 5l1 8" stroke="#3e2512" stroke-width="1.8"/>
+      <rect x="12" y="18" width="8" height="10" rx="1.5" fill="#c8945c" stroke="#3e2512" stroke-width="2"/>
+    </symbol>
+    <symbol id="i-lock" viewBox="0 0 32 32">
+      <path d="M10 14v-3a6 6 0 0 1 12 0v3" fill="none" stroke="#3e2512" stroke-width="2.8"/>
+      <rect x="7" y="14" width="18" height="13" rx="3" fill="#c8945c" stroke="#3e2512" stroke-width="2.4"/>
+      <circle cx="16" cy="20" r="2" fill="#3e2512"/>
+    </symbol>
+  </defs>
+</svg>
+
+<main class="page">
+  <div class="frame" id="frame" data-screen="title">
+    <div id="game"></div>
+    <div class="loading" id="loading">Поливаем поляну…</div>
+
+    <!-- карта уровней -->
+    <section class="map" id="scr-map" aria-label="Карта уровней" hidden>
+      <header class="map-top">
+        <div class="res" title="Монеты в кошельке"><svg><use href="#i-coin"/></svg><span id="m-coins">0</span></div>
+        <div class="res" title="Звёзды"><svg><use href="#i-star"/></svg><span id="m-stars">0</span></div>
+        <span class="map-gap"></span>
+        <button class="shop-btn" type="button" id="m-shop"><svg aria-hidden="true"><use href="#i-shop"/></svg><span>Лавка</span><b class="badge" id="m-shop-badge" hidden>0</b></button>
+        <button class="gear" type="button" data-open-settings aria-label="Настройки"><svg aria-hidden="true"><use href="#i-gear"/></svg></button>
+      </header>
+      <div class="map-list" id="m-list"></div>
+    </section>
+
+    <!-- интерфейс уровня -->
+    <div class="lv" id="level-ui" hidden>
+      <div class="lv-top">
+        <div class="lv-goal" id="lv-goal">
+          <svg aria-hidden="true"><use href="#i-coin"/></svg>
+          <div class="lv-goal-txt"><b id="lv-money">0</b><span id="lv-target">/ 40</span></div>
+          <div class="lv-bar"><i id="lv-bar"></i></div>
+        </div>
+        <div class="lv-time" id="lv-time-box"><svg aria-hidden="true"><use href="#i-clock"/></svg><b id="lv-time">2:30</b></div>
+        <button class="gear" type="button" id="lv-pause" aria-label="Пауза"><svg aria-hidden="true"><use href="#i-pause"/></svg></button>
+      </div>
+      <div class="lv-row">
+        <div class="lv-water" id="lv-water" title="Вода в лейке"></div>
+        <div class="lv-basket" id="lv-basket" title="Корзинка"></div>
+      </div>
+      <div class="lv-seeds" id="lv-seeds" role="radiogroup" aria-label="Что сажать"></div>
+    </div>
+
+    <button class="fps" id="fps" type="button" title="Нажмите, чтобы включить или выключить ограничение 60 кадров">
+      <span class="fps-row"><b class="good">--</b>FPS<span id="fps-ms"></span></span>
+      <span class="fps-hz" id="fps-hz">измеряю экран…</span>
+    </button>
+
+    <div class="title" id="title">
+      <h1 class="logo" aria-label="Цветочная поляна">
+        <span class="logo-big">Цветочная</span>
+        <span class="logo-small">поляна</span>
+      </h1>
+      <div class="title-bottom">
+        <div class="load" id="load">
+          <div class="load-bar"><i id="load-fill"></i></div>
+          <span class="load-text" id="load-text">Рисуем цветы…</span>
+        </div>
+        <button class="play" id="btn-play" type="button" hidden>Играть</button>
+        <button class="title-link" type="button" data-open-settings>Настройки</button>
+      </div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <div class="sheet" id="sheet" hidden></div>
+  </div>
+</main>
+
+<script type="module" src="src/main.js"></script>
+<script>
+  // Модули не загружаются из файла (file://): подсказываем, как запустить игру
+  if (location.protocol === 'file:') {
+    var box = document.getElementById('loading');
+    box.innerHTML = '<div class="file-hint"><b>Так игра не запустится</b>' +
+      '<span>Браузер не загружает модули из файла. Откройте собранную версию или запустите сервер разработки.</span>' +
+      '<a href="dist/index.html">Открыть dist/index.html</a>' +
+      '<code>node tools/serve.mjs</code></div>';
+  }
+</script>
+</body>
+</html>

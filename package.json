@@ -1,0 +1,15 @@
+{
+  "name": "flowerglade",
+  "version": "0.1.0",
+  "description": "Цветочная поляна — игра для Telegram Mini App на собственном движке Canvas 2D",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node tools/serve.mjs",
+    "build": "node tools/build.mjs",
+    "preview": "node tools/serve.mjs 5174 dist"
+  },
+  "devDependencies": {
+    "esbuild": "0.24.0"
+  }
+}
