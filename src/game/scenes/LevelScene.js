@@ -115,7 +115,7 @@ export class LevelScene extends Scene {
   _predicted(i) {
     const b = this.model.beds[i];
     let st = b.stage === 'grow' ? (b.thirsty ? 'thirsty' : 'growing') : b.stage;
-    for (const a of this.model.plannedActions()) {
+    for (const a of this.model.pendingActions()) {
       if (a.bed !== i) continue;
       if (a.type === 'plant') st = 'thirsty';
       else if (a.type === 'water') st = 'growing';
@@ -131,7 +131,7 @@ export class LevelScene extends Scene {
       case 'thirsty': {
         // лейка опустеет раньше — сначала сходить к колодцу
         const m = this.model;
-        const planned = m.plannedActions();
+        const planned = m.pendingActions();
         let water = m.water;
         for (const a of planned) { if (a.type === 'well') water = m.up.can; else if (a.type === 'water') water--; }
         if (water <= 0) { if (!this.order({ type: 'well' }, true)) return; }

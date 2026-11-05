@@ -26,7 +26,7 @@ function bot(m) {
   // 3. полить
   const thirsty = m.beds.findIndex((b, i) => b.stage === 'grow' && b.thirsty && !busy('water', 'bed', i));
   if (thirsty >= 0) {
-    const plannedWater = planned.filter((a) => a.type === 'water').length;
+    const plannedWater = m.pendingActions().filter((a) => a.type === 'water').length;
     if (m.water - plannedWater <= 0) { if (!planned.some((a) => a.type === 'well')) return m.enqueue({ type: 'well' }); }
     else return m.enqueue({ type: 'water', bed: thirsty });
   }

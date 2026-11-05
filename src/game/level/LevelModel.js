@@ -88,6 +88,15 @@ export class LevelModel extends Emitter {
     return this.hero.action ? [this.hero.action, ...this.queue] : this.queue;
   }
 
+  /**
+   * Дела, которые ещё не сделаны: очередь и текущее, если Тиша до него только идёт.
+   * Пока Тиша работает, дело уже выполнено (вода списана, грядка сменилась), его не считаем.
+   */
+  pendingActions() {
+    const h = this.hero;
+    return h.action && h.state === 'walk' ? [h.action, ...this.queue] : this.queue;
+  }
+
   /** Прогнать жука нажатием (без похода). */
   shoo(pest) {
     if (this.over || pest.state === 'gone' || pest.state === 'flee') return false;
