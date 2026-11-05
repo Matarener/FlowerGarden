@@ -38,6 +38,9 @@ export class LevelScene extends Scene {
     this.bucket = this.sprite('bucket', WELL.x, WELL.y - 30).setDepth(WELL.y + 2);
     this.crank = this.sprite('crank', WELL.x + 38, WELL.y - 36).setDepth(WELL.y + 3);
     this._setRope(6);
+    // подсказка над колодцем, когда лейка пуста
+    this.wellHint = this.sprite('thirst', WELL.x, WELL.y - 38).setDepth(1900).setVisible(false);
+    if (!app.reduceMotion) this.tweens.add({ targets: this.wellHint, y: WELL.y - 46, duration: 450, yoyo: true, repeat: -1, ease: 'sineInOut' });
     this.drops = Array.from({ length: 6 }, () => this.sprite('drop', 0, 0).setDepth(2000).setVisible(false).setScale(0.6));
     if (this.def.bouquets) this.sprite('table', TABLE.x, TABLE.y).setStatic();
     this.sprite('counter', 0, 240).setDepth(300);
@@ -312,6 +315,10 @@ export class LevelScene extends Scene {
     this.heroShadow.depth = h.y - 1;
     if (h.state === 'walk' && hero.animName !== 'walk') hero.play('walk');
     else if (h.state === 'idle' && hero.animName === 'walk') hero.play('idle');
+
+    // пустая лейка: над колодцем прыгает капля, пока Тиша туда не идёт
+    const goingToWell = m.plannedActions().some((a) => a.type === 'well');
+    this.wellHint.visible = m.water === 0 && !goingToWell && !this.ended;
 
     this._syncPests(dt);
     this._syncBadges();

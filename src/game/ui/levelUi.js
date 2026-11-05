@@ -54,10 +54,18 @@ export function createLevelUi(app) {
     const w = m.water + '/' + m.up.can;
     if (w !== shown.water) {
       shown.water = w;
-      let html = '';
-      for (let i = 0; i < m.up.can; i++) html += icon(i < m.water ? 'i-drop' : 'i-drop-empty');
+      // лейка, число поливов и капли; пустая лейка мигает и подсказывает про колодец
+      // капли рисуем, только пока их немного: с большой лейкой хватает числа
+      let html = icon('i-can', 'can-ic') + '<b class="w-num">' + m.water + '<small>/' + m.up.can + '</small></b>';
+      if (m.water === 0) html += '<span class="w-hint">к колодцу!</span>';
+      else if (m.up.can <= 5) {
+        html += '<span class="w-drops">';
+        for (let i = 0; i < m.up.can; i++) html += icon(i < m.water ? 'i-drop' : 'i-drop-empty');
+        html += '</span>';
+      }
       el.water.innerHTML = html;
       el.water.classList.toggle('empty', m.water === 0);
+      el.water.classList.toggle('low', m.water === 1);
     }
     const b = m.basket.join(',') + '/' + m.up.basket;
     if (b !== shown.basket) {
