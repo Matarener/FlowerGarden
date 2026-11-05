@@ -1,5 +1,6 @@
 # Публикация игры на GitHub Pages: при каждом push в main
 # собирается dist/index.html (вся игра одним файлом) и выкладывается на Pages.
+# Версия в изометрии (ветка iso) собирается рядом и открывается по адресу /iso/.
 name: Публикация на GitHub Pages
 
 on:
@@ -21,11 +22,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: 20
       - run: npm ci
       - run: npm run build
+      - name: Версия в изометрии
+        run: |
+          if git ls-remote --exit-code --heads origin iso; then
+            git worktree add ../iso origin/iso
+            (cd ../iso && npm ci && npm run build)
+            mkdir -p dist/iso && cp ../iso/dist/index.html dist/iso/index.html
+          fi
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
