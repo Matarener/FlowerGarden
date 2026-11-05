@@ -3,7 +3,7 @@ import { SkeletonSprite } from '../../skeleton/index.js';
 import { CRITTER } from '../data/skeleton.js';
 import { FLOWERS, LOCATIONS, levelDef } from '../data/content.js';
 import { LevelModel } from '../level/LevelModel.js';
-import { BEDS, BED_W, BED_H, SPOTS, WELL, TABLE, anchorOf } from '../level/layout.js';
+import { BEDS, BED_W, BED_H, SPOTS, WELL, TABLE, anchorOf, inBed } from '../level/layout.js';
 import { gladeBackground } from '../art/gardenArt.js';
 import { FLOWER_COLORS } from '../art/flowers.js';
 import { PlantView } from './level/PlantView.js';
@@ -30,9 +30,9 @@ export class LevelScene extends Scene {
     this.bg = this.sprite(gladeBackground(this.textures, this.engine.renderer, this.place), 0, 0).setStatic();
     BEDS.forEach((b, i) => {
       const locked = this.model.beds[i].stage === 'locked';
-      this.sprite(locked ? 'bed_locked' : 'bed', b.x, b.y).setDepth(b.y - 50).setStatic();
+      this.sprite(locked ? 'bed_locked' : 'bed', b.x, b.y).setDepth(b.y - 60).setStatic();
     });
-    this.sprite('well', WELL.x, WELL.y).setStatic();
+    this.sprite('well', WELL.x, WELL.y).setDepth(WELL.y).setStatic();
     // верёвка, ведро и ручка ворота двигаются, поэтому не в статичном слое
     this.rope = this.sprite('rope', WELL.x, WELL.y - 36).setDepth(WELL.y + 1);
     this.bucket = this.sprite('bucket', WELL.x, WELL.y - 30).setDepth(WELL.y + 2);
@@ -42,8 +42,7 @@ export class LevelScene extends Scene {
     this.wellHint = this.sprite('thirst', WELL.x, WELL.y - 38).setDepth(1900).setVisible(false);
     if (!app.reduceMotion) this.tweens.add({ targets: this.wellHint, y: WELL.y - 46, duration: 450, yoyo: true, repeat: -1, ease: 'sineInOut' });
     this.drops = Array.from({ length: 6 }, () => this.sprite('drop', 0, 0).setDepth(2000).setVisible(false).setScale(0.6));
-    if (this.def.bouquets) this.sprite('table', TABLE.x, TABLE.y).setStatic();
-    this.sprite('counter', 0, 240).setDepth(300);
+    if (this.def.bouquets) this.sprite('table', TABLE.x, TABLE.y).setDepth(TABLE.y).setStatic();
 
     this.plants = BEDS.map((_, i) => new PlantView(this, i));
     this.customers = Array.from({ length: 5 }, () => new CustomerView(this));
@@ -86,11 +85,13 @@ export class LevelScene extends Scene {
   _bindInput() {
     BEDS.forEach((b, i) => {
       if (this.model.beds[i].stage === 'locked') return;
-      this.addZone(b.x, b.y - 8, BED_W + 8, BED_H + 30, () => this.onBed(i), () => this.plants[i].pop());
+      // ромб грядки, а не прямоугольник: соседние грядки в изометрии заходят друг за друга
+      const z = this.addZone(b.x, b.y - 8, BED_W + 8, BED_H + 30, () => this.onBed(i), () => this.plants[i].pop());
+      z.hit = (x, y) => inBed(b, x, y);
     });
-    SPOTS.forEach((s, spot) => this.addZone(s.x, s.y - 70, 104, 150, () => this.onCustomer(spot)));
-    this.addZone(WELL.x, WELL.y - 20, 100, 110, () => this.order({ type: 'well' }));
-    if (this.def.bouquets) this.addZone(TABLE.x, TABLE.y - 10, 96, 90, () => this.order({ type: 'tie' }));
+    SPOTS.forEach((s, spot) => this.addZone(s.x, s.y - 50, 90, 110, () => this.onCustomer(spot)));
+    this.addZone(WELL.x, WELL.y - 10, 110, 130, () => this.order({ type: 'well' }));
+    if (this.def.bouquets) this.addZone(TABLE.x, TABLE.y, 110, 90, () => this.order({ type: 'tie' }));
   }
 
   /** Жуков ловим по нажатию, а не по отпусканию: так быстрее. */
@@ -305,7 +306,7 @@ export class LevelScene extends Scene {
     m.update(dt);
     for (const p of this.plants) p.sync(m);
     m.customers.forEach((c) => { if (c) { const v = this.customers.find((x) => x.id === c.id); if (v) v.sync(c); } });
-    for (const v of this.customers) v.body.depth = 262;
+    for (const v of this.customers) v.body.depth = v.body.y;
 
     // Тиша
     const h = m.hero, hero = this.hero;

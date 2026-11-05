@@ -88,7 +88,7 @@ export class Scene {
   _zoneAt(x, y) {
     for (let i = this.zones.length - 1; i >= 0; i--) {
       const z = this.zones[i];
-      if (z.enabled && Math.abs(x - z.x) <= z.w / 2 && Math.abs(y - z.y) <= z.h / 2) return z;
+      if (z.enabled && (z.hit ? z.hit(x, y) : Math.abs(x - z.x) <= z.w / 2 && Math.abs(y - z.y) <= z.h / 2)) return z;
     }
     return null;
   }

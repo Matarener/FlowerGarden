@@ -1,0 +1,18 @@
+# Версия в изометрии живёт в ветке iso и выкладывается по адресу /iso/.
+# Сама выкладка — в pages.yml ветки main; здесь только просим её запуститься.
+name: Обновить версию iso на Pages
+
+on:
+  push:
+    branches: [iso]
+
+permissions:
+  actions: write
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - run: gh workflow run pages.yml --ref main --repo "$GITHUB_REPOSITORY"
+        env:
+          GH_TOKEN: ${{ github.token }}

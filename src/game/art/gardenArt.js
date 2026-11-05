@@ -3,6 +3,7 @@ import { bakeBackground, countFor, grassTuft, hashRandom } from './background.js
 import { INK, oval, disc, box, poly, shadow, shine, curve } from './paint.js';
 import { flowerHead } from './flowers.js';
 import { BED_W, BED_H } from '../level/layout.js';
+import { isoGladeBackground, makeIsoTextures } from './isoArt.js';
 
 /**
  * Графика уровня: поляна с прилавком (фон под ширину экрана), грядки, колодец,
@@ -131,8 +132,8 @@ function drawGladeSides(pal) {
 
 /** Фон поляны для места (home, brook, hill) под ширину экрана. */
 export function gladeBackground(textures, renderer, place) {
-  const pal = PALETTES[place];
-  return bakeBackground(textures, renderer, 'glade_' + place, drawGlade(pal), drawGladeSides(pal));
+  // версия в изометрии: плоский фон drawGlade оставлен для сравнения, но не используется
+  return isoGladeBackground(textures, renderer, place);
 }
 
 /* ---------- предметы ---------- */
@@ -303,4 +304,5 @@ export function makeGardenTextures(textures, label) {
       lb(0, 0.5, String(i), { size: 11, color: '#3e2512', stroke: null });
     });
   }
+  makeIsoTextures(textures);
 }

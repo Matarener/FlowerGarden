@@ -11,17 +11,17 @@ export class PlantView {
     const { x, y } = BEDS[i];
     this.x = x;
     this.y = y;
-    const ground = y + 14;
+    const ground = y - 4;
     this.plant = scene.sprite('plant_mound', x, ground).setDepth(y + 1).setVisible(false);
-    this.thirst = scene.sprite('thirst', x + 32, y - 30).setDepth(y + 40).setVisible(false);
-    this.glint = scene.sprite('glint', x + 10, y - 44).setDepth(y + 41).setVisible(false).setScale(0.5);
+    this.thirst = scene.sprite('thirst', x + 24, y - 40).setDepth(y + 40).setVisible(false).setScale(0.85);
+    this.glint = scene.sprite('glint', x + 12, y - 56).setDepth(y + 41).setVisible(false).setScale(0.5);
     const by = y + BED_H / 2 - 9;
     this.barBg = scene.sprite('bbar_bg', x - 29, by).setDepth(y + 30).setVisible(false);
     this.bar = scene.sprite('bbar_grow', x - 27, by).setDepth(y + 31).setVisible(false);
     this.sig = '';
     this.barW = -1;
     if (!scene.app.reduceMotion) {
-      scene.tweens.add({ targets: this.thirst, y: y - 35, duration: 600, yoyo: true, repeat: -1, ease: 'sineInOut', delay: i * 90 });
+      scene.tweens.add({ targets: this.thirst, y: y - 45, duration: 600, yoyo: true, repeat: -1, ease: 'sineInOut', delay: i * 90 });
       scene.tweens.add({ targets: this.glint, scale: 0.9, alpha: 0.3, rotation: Math.PI / 2, duration: 800, yoyo: true, repeat: -1, ease: 'sineInOut', delay: i * 130 });
     }
   }

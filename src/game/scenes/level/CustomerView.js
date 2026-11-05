@@ -14,11 +14,11 @@ export class CustomerView {
     this.spot = -1;
     this.leaving = false;
     this.body = scene.add(new SkeletonSprite(scene.textures, CRITTER, 'bunny', -100, SPOTS[0].y)).setDepth(262).setVisible(false);
-    this.body.scale = 0.95;
-    this.bubble = scene.sprite('bubble', 0, 0).setDepth(320).setVisible(false);
-    this.icons = [0, 1, 2].map(() => scene.sprite('fl_daisy', 0, 0).setDepth(321).setVisible(false).setScale(0.8));
-    this.pbg = scene.sprite('pbar_bg', 0, 0).setDepth(321).setVisible(false);
-    this.pbar = scene.sprite('pbar_good', 0, 0).setDepth(322).setVisible(false);
+    this.body.scale = 0.85;
+    this.bubble = scene.sprite('bubble', 0, 0).setDepth(1400).setVisible(false);
+    this.icons = [0, 1, 2].map(() => scene.sprite('fl_daisy', 0, 0).setDepth(1401).setVisible(false).setScale(0.8));
+    this.pbg = scene.sprite('pbar_bg', 0, 0).setDepth(1401).setVisible(false);
+    this.pbar = scene.sprite('pbar_good', 0, 0).setDepth(1402).setVisible(false);
     this.orderSig = '';
     this.mood = '';
     this.barW = -1;
@@ -38,7 +38,7 @@ export class CustomerView {
     b.alpha = 1;
     b.x = fromLeft ? -50 : 440;
     b.y = s.y;
-    b.scaleX = fromLeft ? 0.95 : -0.95;
+    b.scaleX = fromLeft ? 0.85 : -0.85;
     b.play('walk');
     this.scene.tweens.add({
       targets: b, x: s.x, duration: 1050, ease: 'quadOut',
@@ -50,7 +50,7 @@ export class CustomerView {
   }
 
   _place(s) {
-    const by = s.y - 150;
+    const by = s.y - 134;
     this.bubble.setPosition(s.x, by);
     this.icons.forEach((ic, k) => ic.setPosition(s.x, by - 6));
     this.pbg.setPosition(s.x - 32, by + 14);
@@ -68,7 +68,7 @@ export class CustomerView {
     b.play(happy ? 'happy' : 'sad');
     const toRight = this.spot !== 0;
     this.scene.timers.delay(happy ? 650 : 750, () => {
-      b.scaleX = toRight ? 0.95 : -0.95;
+      b.scaleX = toRight ? 0.85 : -0.85;
       b.play('walk');
       this.scene.tweens.add({
         targets: b, x: toRight ? 450 : -60, alpha: 0.6, duration: 1100, ease: 'quadIn',
