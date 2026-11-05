@@ -1,6 +1,7 @@
 import { $$, icon } from './dom.js';
 import { Sheet } from './Sheet.js';
 import { UPGRADES, UPGRADE_KEYS } from '../data/content.js';
+import { iconUrl } from '../art/icons.js';
 
 /** Как показать значение ступени улучшения. */
 function stepText(key, v) {
@@ -22,16 +23,23 @@ export function createShopSheet(app) {
   function open() {
     const { state } = app;
     const panel = app.sheet.open(
-      Sheet.head('Лавка', 'В кошельке ' + state.coins + ' монет') +
-      '<div class="settings"><div class="sbtns">' +
+      Sheet.head('Лавка', 'Улучшения действуют на всех уровнях') +
+      '<div class="shop-purse">' + icon('i-coin') + '<b>' + state.coins + '</b><small>в кошельке</small></div>' +
+      '<div class="settings"><div class="up-grid">' +
         UPGRADE_KEYS.map((k) => {
           const u = UPGRADES[k], step = state.upgrades[k], next = state.nextUpgrade(k);
           const dots = u.steps.map((_, i) => '<i class="' + (i <= step ? 'on' : '') + '"></i>').join('');
-          return '<button class="sbtn up-row" type="button" data-up="' + k + '"' + (!next || next.price > state.coins ? ' disabled' : '') + '>' +
-            '<span><span class="up-name">' + u.name + '<span class="up-dots">' + dots + '</span></span>' +
-            '<small>' + u.hint + '. Сейчас: ' + stepText(k, u.steps[step].v) + (next ? ', будет: ' + stepText(k, next.v) : '') + '</small></span>' +
-            (next ? '<span class="price">' + icon('i-coin') + next.price + '</span>' : '<span class="price done">Всё</span>') +
-          '</button>';
+          const poor = next && next.price > state.coins;
+          return '<div class="up-card up-' + k + (next ? '' : ' maxed') + '">' +
+            '<img class="up-pic" alt="" src="' + iconUrl(app.engine.textures, 'up_' + k) + '">' +
+            '<b class="up-name">' + u.name + '</b>' +
+            '<span class="up-dots" aria-label="Ступень ' + (step + 1) + ' из ' + u.steps.length + '">' + dots + '</span>' +
+            '<small class="up-hint">' + u.hint + '</small>' +
+            '<span class="up-val">' + stepText(k, u.steps[step].v) + (next ? '<em>→ ' + stepText(k, next.v) + '</em>' : '') + '</span>' +
+            (next
+              ? '<button class="up-buy' + (poor ? ' poor' : '') + '" type="button" data-up="' + k + '"' + (poor ? ' disabled' : '') + ' aria-label="Купить: ' + u.name + ', ' + next.price + ' монет">' + icon('i-coin') + next.price + '</button>'
+              : '<span class="up-buy done">Всё куплено</span>') +
+          '</div>';
         }).join('') +
       '</div></div>' +
       '<p class="note">Монеты дают за пройденные уровни. Звёзды приносят по 10 монет.</p>',

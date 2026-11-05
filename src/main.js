@@ -3,6 +3,8 @@ import { GameState } from './game/state.js';
 import { makeCritterTextures } from './game/art/critters.js';
 import { makeFlowerTextures } from './game/art/flowers.js';
 import { makeGardenTextures, gladeBackground } from './game/art/gardenArt.js';
+import { makeUpgradeTextures, UPGRADE_ICON_KEYS } from './game/art/upgradesArt.js';
+import { makeMapTextures, MAP_ICON_KEYS } from './game/art/mapArt.js';
 import { iconUrl } from './game/art/icons.js';
 import { FLOWER_KEYS, LOCATIONS } from './game/data/content.js';
 import { TitleScene } from './game/scenes/TitleScene.js';
@@ -73,6 +75,9 @@ async function boot() {
   makeCritterTextures(engine.textures);
   makeFlowerTextures(engine.textures);
   makeGardenTextures(engine.textures);
+  // картинки карты и лавки нужны сразу после титульного экрана
+  makeMapTextures(engine.textures);
+  makeUpgradeTextures(engine.textures);
 
   await saveReady;
   app.ui = createUi(app);
@@ -88,6 +93,7 @@ async function boot() {
   const frame2 = () => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
   const steps = [
     ['Раскладываем семена…', () => FLOWER_KEYS.forEach((k) => { iconUrl(engine.textures, 'fl_' + k); iconUrl(engine.textures, 'bq_' + k); })],
+    ['Рисуем карту…', () => { MAP_ICON_KEYS.concat(UPGRADE_ICON_KEYS).forEach((k) => iconUrl(engine.textures, k)); }],
     ['Расчищаем поляны…', () => {
       // фон ближайшего места, чтобы первый уровень открылся без задержки
       const n = app.state.unlocked;
